@@ -1,0 +1,695 @@
+---
+documentclass: article 
+fontsize: 11p
+header-includes:
+- \usepackage[utf8]{inputenc} 
+- \usepackage[Lenny]{fncychap}
+- \usepackage{multirow}
+- \usepackage{float}
+- \usepackage{graphicx}
+- \usepackage{wrapfig}
+- \usepackage{enumerate}
+- \usepackage{graphicx}
+- \usepackage{float}
+- \usepackage{setspace}
+- \usepackage{amsmath}
+- \usepackage[lmargin = 2.54 cm, rmargin = 2.54 cm, top = 2.54 cm, bottom = 2.54 cm]{geometry}
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+- \usepackage{makeidx}
+- \renewcommand{\headrulewidth}{2pt}
+- \fancyhead[R]{Regresión Logística Multinomial}
+- \lfoot{\LaTeX}
+- \renewcommand{\headrulewidth}{0.00001cm}
+- \usepackage{booktabs}
+format: pdf 
+editor: visual 
+lang: es-ES
+---
+
+```{=tex}
+\begin{titlepage}
+\fontsize{10pt}{19pt}\selectfont
+\centering
+{\bfseries\LARGE UNIVERSIDAD DE EL SALVADOR}\\
+\vspace{0.4cm}
+{\bfseries\LARGE FACULTAD MULDISCIPLINARIA DE OCCIDENTE}\\
+\vspace{0.4cm}
+{\bfseries\LARGE DEPARTAMENTO DE MATEM\'ATICA\par}
+\vspace{1cm}
+{\bfseries\LARGE LICENCIATURA EN ESTAD\'ISTICA\par}
+\vspace{0.5cm}
+{\includegraphics[width = 0.4\textwidth]{UES.png}\par}
+\vspace{0.7cm}
+{\bfseries\LARGE APLICACI\'ON DE REGRESI\'ON LOG\'ISTICA MULTINOMIAL A RESULTADOS DEL ESTUDIO DE FRAMINGHAM\par}
+\vspace{0.5cm}
+{\bfseries\LARGE DOCENTE: \par}
+{\bfseries\LARGE LICENCIADO. JAIME ISAAC PEÑA \par}
+\vspace{1cm}
+{\bfseries\LARGE PRESENTADO POR: \par}
+{\bfseries\LARGE Darlyn Iveth Puentes Jimenez \par}
+\vfill
+{\bfseries\Large   \par}
+\thispagestyle{empty}
+\end{titlepage}
+\thispagestyle{empty}
+\newpage
+\thispagestyle{empty}
+\newpage
+\begin{spacing}{1.5}
+\tableofcontents
+\thispagestyle{empty}
+\end{spacing}
+\newpage
+```
+\subsection { 1. Regresión Logística Binomial y Multinomial}
+
+```{=tex}
+\begingroup
+\begin{spacing}{1.5}
+
+\hspace{1.27cm}La Regresión Logística Binomial es un método estadístico utilizado en análisis de datos para predecir la probabilidad de que un resultado pertenezca a una categoría específica o para estimar la probabilidad de un evento binario en función de una o más variables independientes.La salida de un modelo de regresión logística no es una predicción numérica en el sentido tradicional, sino una probabilidad. Generalmente, se establece un umbral (por ejemplo, 0.5) y se considera que si la probabilidad calculada es mayor que ese umbral, el evento es probable (1), y si es menor, el evento es improbable (0).
+
+\hspace{1.27cm}La Regresión Logística Multinomial es un método estadístico utilizado para modelar y predecir relaciones entre una variable dependiente categórica nominal (que tiene más de dos categorías) y una o más variables independientes, que pueden ser categóricas o continuas. El objetivo principal es entender cómo las variables independientes influyen en la probabilidad de pertenecer a una categoría específica de la variable dependiente. En términos más sencillos, la regresión logística multinomial se utiliza para predecir en cuál de varias categorías posibles caerá una observación en función de las variables explicativas. Las Probabilidades de cada alternativa en un modelo logit multinomial se expresan de la siguiente manera:
+\end{spacing}
+\endgroup
+\begin{center} 
+
+
+
+$P_{ij}=P(Y_{i}=j)=\frac{e^{-(\beta_{1j}+\beta_{2j}X_{2i}+\ldots+\beta_{kj}X_{ki})}}{1+\sum_{g=1}^{J}e^{-(\beta_{1j}+\beta_{2j}X_{2i}+\ldots+\beta_{kj}X_{ki})}},    j=1,2,...J $
+
+
+$P_{i0}=P(Y_{i}=j)=\frac{1}{1+\sum_{g=1}^{J}e^{-(\beta_{1j}+\beta_{2j}X_{2i}+\ldots+\beta_{kj}X_{ki})}}$
+
+
+\end{center}
+```
+```{=tex}
+\subsection{2. Aplicación de Regresión Logística Multinomial en R}
+
+\subsubsection{2.1 Análisis Exploratorio Univariado en R }
+```
+```{=tex}
+\begingroup
+\begin{spacing}{1.5}
+\hspace{1.27cm}Antes de iniciar con el análisis de Regresión Logística conviene realizar un análisis descriptivo univariante para ver la relación entre la variable dependiente y las independientes por separado. Con aquellas variables métricas se realizarán una comparación  de las medias de los grupos de la variable dependiente.
+\end{spacing}
+\endgroup
+```
+```{=tex}
+\begingroup
+\begin{spacing}{1.5}
+
+\hspace{1.27cm}La base que se utilizará para realizar la aplicación de Regresión Logística
+Multinomial corresponde al famoso estudio de Framingham, también conocido como
+el Framingham Heart Study (FHS), el cual es uno de los estudios epidemiológicos
+más influyentes y largos en la historia de la investigación médica. Este estudio
+se lleva a cabo en la ciudad de Framingham, Massachusetts, Estados Unidos. El
+Framingham Heart Study se inició en 1948 y ha sido fundamental para mejorar la
+comprensión de las enfermedades cardiovasculares y sus factores de riesgo. El
+objetivo es analizar que factores de riesgo cardiovascular están relacionados con
+los diferentes resultados en el Estudio de Framingham. Las variables que se
+utilizarán en este caso están recogidas en el siguiente cuadro:
+
+\end{spacing}
+\endgroup 
+\renewcommand{\arraystretch}{1.0}
+```
+\newpage
+
+```{=tex}
+\begin{table}[h!]
+  \caption{Descripción de los datos.}
+  \begin{tabular}{c|c|c}
+  \toprule
+  Variable  & Descripción & Codificación\\
+  \midrule
+  Sexo & Sexo del Paciente & 1="Femenino", 0=               "Masculino"\\
+  
+  Colesterol & nivel de colesterol  & Nivel continuo de   Colesterol \\
+  
+  Edad & Edad del Paciente & Años \\
+  
+  IMC &  índice de masa corporal &  índice continuo \\
+  
+  BPvar & Variabilidad sanguínea & Dato continuo\\
+  
+  Frecuencia & Frecuencia cardíaca & Frecuencia continua\\
+ 
+  Glucosa & Nivel de glucosa & Glucosa Continua\\
+  
+  Fuma & Si fuma o no & 0="No", 1="Si"\\
+  
+  Resultado & \centering {Desenlace del paciente} &         \parbox{6cm}{0="Sin evento", 1="Con hipertensión"}, 2="Fallecido"\\
+  Cigarrillos & Cigarrillos que fuma  & Número de cigarrillos\\
+  \bottomrule
+  \end{tabular}
+\end{table}
+```
+```{=tex}
+\begingroup
+\begin{spacing}{1.5}
+\hspace{1.27cm} La data está contenida en un archivo de excel llamado \textit{BaseRegresionMult}, para luego importarla a R. Para analizar se requiere que convertir a factores las variables categóricas para que R
+las tome como niveles, el siguiente código hace posible lo anterior:
+\end{spacing}
+\endgroup
+```
+```{r}
+library(readxl)
+cardio= read_excel("BaseRegresionMult.xlsx")
+cardio$Sexo=as.factor(cardio$Sexo)
+cardio$Resultado=as.factor(cardio$Resultado)
+cardio$Fuma=as.factor(cardio$Fuma)
+summary(cardio)#estadísticas descriptivas del conjunto de datos
+
+```
+
+\newpage
+
+```{=tex}
+\begingroup
+\begin{spacing}{1.5}
+\hspace{1.27cm}La edad promedio de los pacientes es de 47 años y la persona mas joven sometido a esta prueba es de 32 años, del cual 1297 son personas del sexo femenino y 1019 del sexo masculino.
+A continuación se tiene un gráfico de barras agrupados por categoría de resultados. Es interesante observar que hay mayor número de personas fallecidas que si fuman y mayor número de personas que no poseen un resultado desfavorable aquellas que no fuman.
+\end{spacing}
+\endgroup
+```
+```{r,fig.width=6, fig.height=4,fig.align='center'}
+library(ggplot2)
+ggplot(data = cardio, aes(x = Fuma, fill = Resultado)) +
+  geom_bar(position = "dodge")+
+  labs(title = "Recuento por Categoría de la variable Fuma",
+       y = "Recuento")
+```
+
+```{r,fig.align='center',warning=FALSE, message=FALSE}
+
+
+library(dplyr)
+
+cardio %>% 
+  count(Resultado) %>% 
+  mutate(porcentaje = round(n/sum(n)*100), 1) %>% 
+  ggplot(mapping = aes(factor(1), y = porcentaje, fill = Resultado)) +
+  geom_bar(stat = "identity") +
+  coord_polar(theta = "y") +
+  theme_void() +
+  geom_text(aes(label = paste(porcentaje,"%", sep = "")),
+            position = position_stack(vjust = 0.5))+
+  labs(title = "Porcentaje de observaciones en cada categoría.")
+       
+```
+
+```{r,fig.align='center'}
+library(ggplot2)
+ggplot(data = cardio, aes(x = Sexo, fill = Resultado)) +
+  geom_bar(position = "dodge")+labs(title = "Genero por categoría", y="Recuento")
+```
+
+```{r,fig.align='center',warning=FALSE, message=FALSE}
+
+
+str(cardio)
+```
+
+Todas las variables contenidas de la data son numéricas, excepto \textit{Fuma, Sexo} y \textit{Resultado}
+
+```{r}
+
+ggplot(data = cardio, aes(x = Resultado, y = IMC)) +
+  geom_boxplot(col="red")
+ggplot(data = cardio, aes(x = Resultado, y =Colesterol )) +
+  geom_boxplot(col="chartreuse3")
+ggplot(data = cardio, aes(x = Resultado, y =Edad )) +
+  geom_boxplot(col="#D02090")
+ggplot(data = cardio, aes(x = Resultado, y =`Frecuencia`)) +
+  geom_boxplot(col="mediumturquoise")
+
+```
+
+```{=tex}
+\begingroup
+\begin{spacing}{1.5}
+\hspace{1.27cm}Se observa que para las 3 categorías  el promedio del nivel de colesterol es igual, también para la variable Edad y Frecuencia Cardíaca, esto puede dar indicios de no hay un efecto significativo de la variable categórica en la variable numérica. Para asegurar esto, hay que ver si estas variables contribuyen a la predicción de la variable dependiente realizando el modelo de regresión.  
+\end{spacing}
+\endgroup
+\subsubsection {2.2 Estimación del Modelo de Regresión }
+```
+```{=tex}
+\begingroup
+\begin{spacing}{1.5}
+\hspace{1.27cm}Para efectos de este
+estudio se tomará como referencia a la categoría  "Sin evento", pues el objetivo
+es realizar comparaciones con las categorías que presentan resultados
+desfavorables de aquellos pacientes de acuerdo a características dadas respecto de la categoría que no posee ningún evento. Para
+encontrar la probabilidad de que una persona pertenezca a alguno de los
+resultados respecto de los distintos factores asociados, como el nivel de
+Glucosa, Colesterol, Masa Muscular y otros, se estima el modelo de regresión
+multinomial y su significatividad global a través de la librería VGAM.
+\end{spacing}
+\endgroup
+```
+
+```{r}
+library(VGAM)
+#Modelo Nulo
+model0<-vglm(Resultado~1,data=cardio,family=multinomial(refLevel="Sin evento"))
+
+#Modelo con todos los predictores
+model1=vglm(Resultado~.,data=cardio,family=multinomial(refLevel="Sin evento")
+            ,model=TRUE)
+#model1
+
+lrtest(model0,model1)
+```
+
+```{=tex}
+\begingroup
+\begin{spacing}{1.5}
+\hspace{1.27cm}El primer modelo que se observa contiene únicamente por los interceptos
+$\beta_0$, es decir que las variables independientes no están dentro de este
+modelo y sus coeficientes son nulos, por otro lado, el segundo modelo contiene a
+todas las variables independientes. El objetivo con realizar estos dos modelos
+es calcular el ratio de verosimilitud entre ambos(deviance), si el del segundo
+modelo es más pequeño entonces se dice que existe alguna variable que ejerce
+influencia significativa en la variable dependiente. De la salida anterior se
+observa que el p valor de correspondiente al de ji-cuadrado es significativo,
+recordando que para saber si la diferencia es significativa, se debe calcular la
+diferencia entre las máximas verosimilitudes de los modelos y distribuirla como
+una $\chi^2$ con grados de libertad igual a la diferencia en el número de
+parámetros de los modelos $(k_M - k_0)$. Por tanto existe algún factor ($\beta$
+distinto de cero) que influye en el Resultado, estos es, el modelo completo se ajusta
+significativamente mejor que el modelo reducido. 
+
+\end{spacing}
+\endgroup
+\subsubsection{2.3 Efecto de
+cada predictor}
+```
+```{=tex}
+\begingroup
+\begin{spacing}{1.5}
+\hspace{1.27cm}En la sección anterior se verifica que al menos un predictor es distinto de cero, y efectivamente al menos uno es distinto de cero, ahora se evaluará para identificar cuales de las variables son las que aportan en la explicación de la variable Resultado.
+\end{spacing}
+\endgroup
+```
+```{r,warning=FALSE}
+summary(model1)
+```
+
+```{=tex}
+\begingroup
+\begin{spacing}{1.5}
+\hspace{1.27cm}La salida anterior ofrece los resultados de los coeficientes estimados, la
+hipótesis que se verifica para estos coeficientes es análoga al contraste de
+significatividad global anterior. Como se tiene $k-1$ modelos de regresión, se
+observa que para cuando se hace la comparación de la categoría de referencia
+"Sin evento" con "Con hipertensión" resulta significativos los coeficientes de
+sexo masculino, Edad, Masa Muscular, BPvar y Cigarrillos por día. esto es: Los hombres en comparación con las mujeres tienen una menor probabilidad de pertenecer a la categoría de referencia en lugar de "Con hipertensión" o "Fallecido". Por otro
+lado si se tiene un aumento de masa muscular es más probable que esta persona
+esté en el grupo de los que tienen hipertensión, además entre más cigarrillos
+consuma su riego de poseer hipertensión es mayor en lugar de no tener un
+resultado negativo. En la siguiente comparación "Sin evento" con "Fallecido"
+resultan que los coeficientes que contribuyen al modelo son: La Edad, BPvar y
+cigarrillos por día, es decir que a menor edad es menos probable fallecer en
+comparación de obtener un resultado negativo, y también si la persona posee un
+aumento en la variabilidad de presión arterial es más probable que esta persona
+fallezca en lugar de no poseer ningún resultado desfavorable, finalmente si la
+persona fuma una pequeña cantidad de cigarrillo es más probable que no posea
+ningún resultado desfavorable en lugar de fallecer. 
+\end{spacing}
+\endgroup
+\subsubsection{2.4 Pronósticos de la Categoría de Resultado}
+```
+```{=tex}
+\begingroup
+\begin{spacing}{1.5}
+\hspace{1.27cm}Suponiendo que un paciente tiene las siguientes características:Masculino, con Colesterol de 195, 39 años de edad, 26 de masa corporal, variabilidad sanguínea de -17, frecuencia cardíaca de 80, Glucosa de 77, No fuma y no fuma ningún cigarrillo. cual es la probabilidad de que esta persona no posea ningún evento:
+\end{spacing}
+\endgroup
+```
+```{r}
+
+e1=exp(-3.02-0.43*0-0.001*195+0.055*39+0.062*26+0.067*-17+0.001*80+0.002*77
+       -0.31*0+0.02*0)
+e2=exp(-7.54+0.047*0-0.0019*195+0.116*39+0.016*26+0.03*-17+0.009*80
+       +0.001*77
+       +0.17*0+ 0.03*0)
+
+pse = 1 / (1 + e1 + e2);pse
+pch =e1 / (1 + e1 + e2);pch
+pf = e2 / (1 + e1 + e2);pf
+
+
+```
+
+```{=tex}
+\begingroup
+\begin{spacing}{1.5}
+\hspace{1.27cm}Para este caso esta observación tiene un 56.7\% de probabilidad de  pertenecer a la categoría \textit{Sin evento}, 39.4\% a \textit{Con hipertensión} y 3.9\% a  \textit{Fallecido}, es decir, que esta persona de acuerdo a las características dadas tiene mayor probabilidad de ser una persona \textit{Con hipertensión} pues es la probabilidad más alta. En un modelo logit multinomial, la probabilidad de cada categoría se calcula en relación con las demás categorías, y la suma de las probabilidades para todas las categorías debe ser igual a 1.
+\end{spacing}
+\endgroup
+```
+\subsubsection{2.5 Obtención de los \textit{Risk Ratios}}
+
+```{=tex}
+\begingroup
+\begin{spacing}{1.5}
+\hspace{1.27cm}La contribución relativa sin tener que preocuparse por las unidades de medidas de cada variable independiente 
+se solventa a través de los coeficientes estimados estandarizados, es decir los \textit{risk ratios}\footnote{ La interpretación se brinda en la Sección 4 de este documento},
+que permiten interpretar el efecto de una variable independiente en términos de
+probabilidad de pertenecer a una categoría en comparación con la categoría de
+referencia.
+\end{spacing}
+\endgroup
+```
+```{r}
+round(exp(coef(model1)),4)
+```
+
+\subsubsection{2.6 Evaluación del Ajuste del modelo estimado}
+
+```{=tex}
+\begingroup
+\begin{spacing}{1.5}
+\hspace{1.27cm}Para determinar cuan bueno es el modelo, se hace la comparación entre los siguientes
+coeficientes:
+Como se observa los $R^2$ son relativamente bajos, lo que índica
+que el modelo no explica una gran proporción de la variabilidad en los datos. El $R^2$ de CoxSnell es un poco más alto, indica
+que el modelo explica un 19.53\% de la variabilidad en la variable respuesta en
+relación a la categoría de referencia "Sin evento". También el $R^2$ de
+Nagelkerke, establece que el modelo es capaz de explicar un 23.16\% de los
+cambios en la variable respuesta en comparación con el modelo nulo.
+\end{spacing}
+\endgroup
+```
+```{r, warning=FALSE, message=FALSE}
+library(DescTools)
+
+PseudoR2(model1, which = "all")
+```
+\newpage
+```{=tex}
+\subsection {3. Aplicación de Regresión Logística Multinomial en Python}
+\subsubsection {3.1 Análisis Exploratorio en Python}
+```
+```{python}
+import pandas as pd
+cardio1 = pd.read_excel(r"BaseRegresionMult.xlsx")
+cardio1.head(20)
+```
+
+Estadísticas descriptivas:
+
+```{python}
+cardio1.describe()
+```
+
+```{python}
+
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(6, 6))
+sns.boxplot(data=cardio1, x='Resultado', y='Colesterol')
+plt.title('Colesterol por Resultado')
+plt.xlabel('Resultado')
+plt.ylabel('Colesterol')
+plt.show()
+
+
+```
+
+```{python}
+plt.figure(figsize=(6, 6))
+sns.boxplot(data=cardio1, x='Resultado', y='IMC')
+plt.title('Masa Muscular por Resultados')
+plt.xlabel('Resultado')
+plt.ylabel('Colesterol')
+plt.show()
+
+```
+
+```{python}
+plt.figure(figsize=(6, 6))
+sns.boxplot(data=cardio1, x='Resultado', y='Frecuencia')
+plt.title('Frecuencia Cardíaca por Resultado')
+plt.xlabel('Resultado')
+plt.ylabel('Colesterol')
+plt.show()
+
+```
+
+```{=tex}
+\subsubsection{3.2 Regresión Logística utilizando Usando  Sci-Kit Learn}
+\begingroup
+\begin{spacing}{1.5}
+\hspace{1.27cm} A continuación se muestran las bibliotecas generales de aprendizaje automático de Python para realizar el análisis de Regresión Logística en los resultados obtenidos. Algunas funciones de estas librerías son: \texttt{LogisticRegression} para el modelo de regresión logística multinomial. \texttt{train\_test\_split} para dividir los datos en conjuntos de entrenamiento y prueba. \texttt{accuracy\_score} y \texttt{classification\_report} para evaluar el rendimiento del modelo.
+\end{spacing}
+\endgroup
+```
+```{python}
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+import  matplotlib.pyplot as plt
+from sklearn.metrics import accuracy_score, classification_report
+```
+
+```{=tex}
+\subsubsection{3.3 Codificación de variables categóricas}
+\begingroup
+\begin{spacing}{1.5}
+
+\hspace{1.27cm}Antes de aplicar cualquier modelo de aprendizaje automático, hay que codificar aquellas variables
+que son categóricas, en este caso esta característica las cumplen las variables:
+\textit{Resultado}, \textit{Sexo} y \textit{Fuma}. A continuación se muestra el
+mapeo utilizado para realizar el cambio en la codificación de las variables,
+este paso se realiza con el fin de que el modelo pueda comprender y utilizar
+esta información en el proceso de entrenamiento.
+
+\end{spacing}
+\endgroup
+```
+```{python}
+resultados2={"Sin evento":1,"Con hipertensión":2, "Fallecido":3}
+cardio1["Resultado"]=cardio1["Resultado"].map(resultados2)# Recodificación de la Resultado
+
+sexo={"Masculino":0,"Femenino":1} # Recodificación de la variable Sexo
+cardio1["Sexo"]=cardio1["Sexo"].map(sexo)
+
+
+fuma={"No":0,"Si":1}            # Recodificación de la variable Fuma
+cardio1["Fuma"]=cardio1["Fuma"].map(fuma)
+```
+
+\subsubsection {3.4 Estimación del Modelo de Regresión}
+
+\hspace{1.27cm}
+
+Antes de estimar el modelo, hay que realizar la división de los datos en conjuntos de entrenamiento y prueba. Esto se hace para evaluar el rendimiento del modelo de manera adecuada, con la función train_test_split de scikit-learn:
+
+```{python}
+X = cardio1.drop('Resultado', axis=1)# en x las variables independientes 
+#y borramos la dependiente de la data
+y=cardio1['Resultado']# asignamos en la variable dependiente la variable Resultado
+```
+
+División de la data en train(70%) y testing (30%):
+
+```{python}
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+#División de datos 
+#en conjuntos de entrenamiento y prueba.
+
+#instanciamos el modelo
+modelLog = LogisticRegression(multi_class='multinomial', solver='lbfgs', max_iter=10000)
+# entrenamiento del modelo
+modelLog.fit(X_train, y_train)
+
+```
+
+```{=tex}
+\begingroup
+\begin{spacing}{1.5}
+El modelo "aprende" a partir de los datos de entrenamiento y estima los
+coeficientes que se utilizarán para hacer predicciones.
+\end{spacing}
+\endgroup
+```
+```{python}
+# Predecir los valores en el conjunto de prueba
+y_pred = modelLog.predict(X_test)
+
+#y_pred-> arroja las categorías que pertenecen a cada observación.
+```
+
+```{=tex}
+\subsubsection {3.5 Precisión del modelo y Matriz de Confusión} 
+\begingroup
+\begin{spacing}{1.5}
+\hspace{1.27cm}Una vez entrenado el modelo, se puede evaluar su rendimiento en los datos de prueba utilizando métricas
+adecuadas para problemas de clasificación multinomial, como la precisión(accuracy), la matriz de confusión o cualquier otra métrica relevante.
+\end{spacing}
+\endgroup
+```
+```{python}
+precision = accuracy_score(y_test, y_pred)
+round(precision,4)
+```
+
+La precisión del modelo es de 0.60 lo que resulta aceptable.
+
+```{python}
+from sklearn.metrics import confusion_matrix
+confusion_matrix = confusion_matrix(y_test, y_pred)
+print(confusion_matrix)
+```
+
+```{=tex}
+\begingroup
+\begin{spacing}{1.5}
+\hspace{1.27cm}La matriz de confusión indica en su diagonal principal como el modelo ha clasificado correctamente y por debajo de esta, están los falsos positivos, es decir aquellos que fueron clasificados en esa categoría cuando en realidad no lo son, y por encima de la diagonal los falsos negativos, en donde le modelo ha clasificado a las observaciones no pertenecientes a esa categoría cuando en verdad si pertenecen.
+
+\hspace{1.27cm}Para pronosticar un nuevo caso con el modelo se tiene una observación con las caracteristicas siguientes: 
+suponiendo que la persona es del sexo masculino, con Colesterol de 195, 39 años de edad, 26 de masa corporal, variabilidad sanguínea de -17, frecuencia cardíaca de 80, Glucosa de 77, No fuma y no fuma ningún cigarrillo.
+\end{spacing}
+\endgroup
+```
+```{python,warning=FALSE }
+pres=modelLog.predict([[0, 195, 39, 26.97, -17, 80, 77, 0, 0]])
+print(pres)
+```
+
+```{=tex}
+\begingroup
+\begin{spacing}{1.5}
+\hspace{1.27cm}Estos datos corresponde a la primera observación de la data que esta clasificado que no tiene resultado desfavorable, al realizar la predicción con el modelo, efectivamente lo clasifica en la categoría 1. 
+ 
+\end{spacing}
+\endgroup
+```
+\subsubsection {3.6 Probabilidades calculadas}
+
+```{python}
+df=pd.DataFrame( modelLog.predict_proba(X_test),columns=modelLog.classes_)
+df['Suma'] = df.sum(axis=1)
+df["Resultado Predicho"]=y_pred
+df["Resultado observado"]=y_test.to_frame().reset_index().drop(columns="index")
+
+df.head(15)
+```
+
+```{=tex}
+\begingroup
+```
+```{=tex}
+\begin{spacing}{1.5}
+\hspace{1.27cm}La clase con mayor probabilidad es el resultado de la clase predicha. Además, esta la columna en donde está la predicción y el resultado observado, y se evidencia que en la categoría 2 acierta en clasificación el modelo mientras que cuando el valor observado es la categoria 3 el modelo no acierta en la clasificación, luego esta la  suma de las probabilidades que es igual a 1. 
+\end{spacing}
+\endgroup
+```
+```{python}
+```
+
+\newpage
+
+```{=tex}
+\subsection {4. Aplicación de Regresión Logística en SPSS}
+\begingroup
+\begin{spacing}{1.5}
+\hspace{1.27cm}SPSS es un software
+que facilita mucho la aplicación de esta técnica, puesto que es mas gráfico en
+comparación que cuando se realiza en R y  Python. Para dar inicio, se
+especifican las variables que estarán en la aplicación y se proporcionan os
+datos, como sigue:
+\end{spacing}
+\endgroup
+```
+```{=tex}
+\begin{figure}[h]
+  \centering
+  \begin{minipage}{0.9\linewidth}
+    \caption{Vista de datos en SPSS}
+    \includegraphics[width=0.9\linewidth]{SPPSvista.png}
+  \end{minipage}
+\end{figure}
+```
+```{=tex}
+\begingroup
+\begin{spacing}{1.5}
+
+\hspace{1.27cm}En la parte superior selecciona \textit{Analizar>Logística>Regresión
+Multinomial}. luego se especifica la variable dependiente y covariables, para
+este caso en el modelo no se evaluaran interacciones de variables, por lo que se
+deja por defecto, Efectos Principales. En la parte de \textit{Estadíscos} se
+selecciona \textit{Pseudo R cuadrado, Informacion de Ajuste} y \textit{criterios de Información}.
+Los Resultados que brinda el software son los siguientes:
+  1.  Resumen de Procesamiento de casos el cual indica que la base esta conformada por un 30.3\% de personas que no tienen ningún resultado negativo, 58.1\% con hipertensión y finalmente un 11.6\% han fallecido. 
+
+  2.  Información de ajuste del modelo:
+el siguiente cuadro se observa como el modelo final se ajusta significativamente mejor que el modelo nulo ( solo con interceptos)
+\end{spacing}
+\endgroup
+```
+```{=tex}
+\begin{figure}[h]
+  \centering
+  \caption{Ajuste del Modelo}
+  \includegraphics[width=\linewidth]{ajustem.png}
+\end{figure}
+```
+
+\begin{figure}[h]
+  \centering
+  \caption{Bondad de Ajuste del Modelo}
+  \includegraphics[width=\linewidth]{bondad.png}
+\end{figure}
+
+```{=tex}
+\begin{figure}[h]
+  \centering
+  \caption{Estimación de Parámetros}
+    \includegraphics[width=\linewidth]{estparametros.png}
+\end{figure}
+```
+```{=tex}
+\newpage
+\begingroup
+\begin{spacing}{1.5}
+\hspace{1.27cm}En la Figura 4 se obtienen las estimaciones de los parámetros del modelo, en la primera columna luego de las variables, esta los coeficientes del modelo B, luego el error estándar, el test de Wald asociado a cada coeficiente, grados de libertad, el p valor y finalmente el \textit{risk ratio}. 
+
+\hspace{1.27cm}En la columna del p valor, como antes se mencionaba que para cuando las categorías son Sin evento y Con Hipertensión las variables que contribuyen a la explicación de esta combinación son: Edad, IMC, BParv, cigarrillos y Sexo y de la misma manera cuando la comparación de Sin evento y Fallecido son las mismas variables que contribuyen excepto IMC. 
+
+\hspace{1.27cm}En los risk ratios, un aumento de una unidad en la variable Edad se asocia con un aumento del 5.7\% en las probabilidades de tener hipertensión en lugar de no tener un resultado desfavorable, manteniendo todas las demás variables constantes en el modelo. Además, un incremento en el índice de masa muscular indica que es más probable que el paciente tenga hipertensión, luego si la variabilidad sanguínea disminuye en una unidad es 1.070 veces menos probable pertenecer al grupo de personas con hipertensión. Los hombres tienen un 36\% (\textit{risk ratio} de 0.64) menos de probabilidades de tener hipertensión en lugar de no tener evento en comparación con las mujeres. 
+
+\hspace{1.27cm}Cuando se cambia a la categoría de fallecido con la de referencia (“Sin evento”) las interpretaciones son análogas, es decir que un aumento en la edad existe un 12.3\% de fallecer en comparación de un resultado desfavorable, así mismo un aumento en la variabilidad sanguínea se asocia con un 3.2\% de probabilidad de fallecer en lugar de no tener ningún evento desfavorable y entre más cigarrillos consuma por día existe la probabilidad de un 3.2\% de que fallezca en lugar de no tener ningún evento de salud. 
+
+3. Clasificación de los casos: muestra como fue hecha la clasificación(Figura 5), en la diagonal principal se muestran los casos que acertaron en la clasificación, en \textit{Sin evento} se tienen 294 casos bien clasificados, 178 se clasificaron en esta misma siendo en realidad, observaciones con resultado que tiene hipertensión, y 45 que son fallecidos se clasificaron en la categoría \textit{Sin evento}, y así se puede continuar con la clasificación con las demás categorías. Entre más valores existan en la diagonal mejor es la precisión del modelo.
+
+\end{spacing}
+\endgroup
+```
+```{=tex}
+\begin{figure}[h]
+  \centering
+  \caption { Clasificación General}
+  \includegraphics[width=\linewidth]{clasificacioncasos.png}
+\end{figure}
+```
+\newpage
+```{=tex}
+\subsection{5. Conclusión}
+\begingroup
+\begin{spacing}{1.5}
+\hspace{1.27cm} Las enfermedades cardiovasculares, también conocidas como enfermedades del corazón, son un grupo de trastornos que afectan el corazón y los vasos sanguíneos. Estas enfermedades pueden ser potencialmente graves y, en algunos casos, mortales. 
+
+\hspace{1.27cm}Las variables que resultan que tienen peso para determinar el desenlace de un paciente son la Edad, IMC, BParv, cigarrillos y Sexo. Entre más edad posea el paciente es más probable que éste, al cabo del tiempo desarrolle hipertensión o fallezca debido a una enfermedad cardiovascular, además si presente un aumento en la Masa muscular y fume un número alto de cigarrillos por día  existe la probabilidad de que se categorice en el grupo de hipertensión o fallezca. 
+
+\hspace{1.27cm}En general, la regresión logística es una herramienta estadística que puede ayudar en los diferentes campos de la ciencia, en este trabajo se evidencia como esta es útil para predecir cual es el resultado de acuerdo con las características presentaron los pacientes que se encuentran en la base de Datos de Framingham. Es muy accesible su aplicación, como se ha presentado en este documento, en R, Python y SPSS poseen esta herramienta y arrojan resultados similares con algunas diferencias muy pequeñas, si se desea una manera mas gráfica SPSS es el que encabeza la lista. Luego en Python,  tenemos el aprendizaje automático el cual tiene la  capacidad de aprender de datos y extraer patrones complejos lo convierte en una herramienta poderosa para la toma de decisiones, finalmente R lo hace de una forma más pausada y analítica. 
+\end{spacing}
+\endgroup
+```
